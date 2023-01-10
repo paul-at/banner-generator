@@ -66,29 +66,33 @@ gulp.task("watch-app", function() {
 });
 
 //Build application once. Pack scripts and build styles.
-gulp.task("build-js", ["webpack:build-dev"], function () {
+gulp.task("build-js", gulp.series("webpack:build-dev", function (done) {
   notify({
     title: 'Gulp Build',
     message: 'App was built'
   });
   lr.changed({body: {files: ['*']}});
-});
-gulp.task("build-styles", ["styles"], function () {
+  done()
+}));
+gulp.task("build-styles", gulp.series("styles", function (done) {
   notify({
     title: 'Gulp Build',
     message: 'App was built'
   });
   lr.changed({body: {files: ['*']}});
-});
+  done()
+}));
 
-gulp.task("build-app", ["webpack:build-dev","styles"], function () {
+gulp.task("build-app", gulp.series("webpack:build-dev","styles", function (done) {
   notify({
     title: 'Gulp Build',
     message: 'App was built'
   });
   lr.changed({body: {files: ['*']}});
-});
+  done()
+}));
 //Default task for gulp
-gulp.task('default', ['connect','build-app', 'watch-app'], function () {
+gulp.task('default', gulp.series('connect','build-app', 'watch-app', function (done) {
   console.log('listen to Connect on 9002');
-});
+  done()
+}));
